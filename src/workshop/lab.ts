@@ -40,6 +40,7 @@ import { newFlight, multirotorStep, batteryStep } from '../flight/physics';
 import type { StickState } from '../flight/controls';
 import { drawWorldIso, drawCraftFlight, fpvScene, goalPointer, type FpvBox } from '../flight/render';
 import { keyDown, keyUp, clearKeys, readSticks, makePad, type VStick, type PadHandle } from '../flight/controls';
+import { craftAnimBusy } from '../crafts/anim';
 
 /* ------------------------------------------------------------------ */
 /* state                                                               */
@@ -424,6 +425,7 @@ function goFly(modeKey: string): void {
   const c = calc();
   const cells = (c.cells as number) ?? 6;
   D.flight = newFlight(c, WORLD.pad, DR.mpos.length, cells);
+  D.flight.mode = modeKey; // crafts' physics overrides can read it
   D.stick = { thr: 0, thrAbs: 0, yaw: 0, pitch: 0, roll: 0 };
   clearKeys();
   document.querySelector('.stage')?.classList.add('flying');
@@ -1146,6 +1148,7 @@ export function mountDrone(key: string): void {
       !!D.test ||
       D.queue.length > 0 ||
       D.smoke.length > 0 ||
+      craftAnimBusy() ||
       Object.values(D.placed).some((p) => (p.leave && p.t > 0) || (p.t > 0 && p.t < 1)) ||
       D.ex !== D.exT);
   const kick = (): void => {

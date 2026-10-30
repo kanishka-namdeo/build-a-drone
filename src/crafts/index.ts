@@ -12,9 +12,15 @@ import { lr7 } from './lr7';
 import { race5 } from './race5';
 import { gpscam } from './gpscam';
 import { delivery } from './delivery';
+import { agrihexa } from './agrihexa';
+import { wing9 } from './wing9';
+import { vtol } from './vtol';
+import { swarm } from './swarm';
+import { tricopter } from './tricopter';
+import { octo } from './octo';
 import { whoop65 } from './whoop65';
 
-export const crafts: CraftRecord[] = [quad5, whoop65, cine35, lr7, race5, gpscam, delivery];
+export const crafts: CraftRecord[] = [quad5, whoop65, cine35, lr7, race5, gpscam, delivery, agrihexa, wing9, vtol, swarm, tricopter, octo];
 
 export interface RosterEntry {
   key: string;
