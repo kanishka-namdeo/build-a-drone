@@ -100,3 +100,19 @@ Bugs found + fixed:
 
 ### Resume notes
 - Remaining: version bump to 1.0.0, tag, release workflow run with dist artifacts.
+
+### Checkpoint 11 — Release (M7)
+- Version bumped 0.1.0 → **1.0.0**; SW cache version bumped.
+- Tag `v1.0.0` pushed. GitHub Actions all green:
+  - **Release** workflow: built + published the GitHub Release with 13 assets
+    (drone-lab-v1.0.0.zip + individual dist files).
+  - **E2E** workflow (Playwright, chromium): passed on the tag.
+  - **CI** (typecheck + unit + build): passed after excluding tests/e2e from
+    vitest (Playwright specs now only run via `npm run test:e2e` / the E2E workflow).
+- Final visual QA (screenshot + vision review): design-bench labels visible,
+  all six calculator tiles correct (514 g / 12.5:1 / 28% / 144 A / 12.3 / 5.2 min),
+  cost table, drone figure, no defects.
+
+**Session complete. Resume point: v1.0.0 released; next steps would be
+deployment (e.g. Vercel/GitHub Pages from dist/), more crafts, or gamepad
+support.**
