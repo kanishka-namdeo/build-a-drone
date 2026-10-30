@@ -8,9 +8,10 @@ Drone Lab is a single-page, zero-dependency TypeScript app: vanilla DOM + SVG + 
 index.html
   └── src/main.ts                  boot: startLab(crafts, roster) + SW registration
         ├── src/engine/            drawing engine (no craft knowledge)
-        │     core.ts              projection, primitives, shading, ink filter, tags
+        │     core.ts              projection, primitives, 8-band cel shading, ink filter, tags
         │     frames.ts            oriented 3D frames (FR.I/T/Rx/Ry/Rz/S)
-        │     oshapes.ts           frame-relative solids, wires, glow dots
+        │     oshapes.ts           frame-relative solids, wires, glow dots, prop discs
+        │     vfx.ts               atmosphere: sky/indoor wall, clouds, haze, ground detail, vignette
         │     materials.ts         palettes, wire colours, resistor code
         │     shell.ts             mountFigure(): page chrome + widgets + test hooks
         │     audio.ts             WebAudio synth (sfx, motor hum, lofi bus)

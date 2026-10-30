@@ -116,3 +116,54 @@ Bugs found + fixed:
 **Session complete. Resume point: v1.0.0 released; next steps would be
 deployment (e.g. Vercel/GitHub Pages from dist/), more crafts, or gamepad
 support.**
+
+---
+
+## Session 2 — 2026-10-31 (Asia/Dubai)
+
+**Task**: "improve the graphics" — a visual-quality pass over the whole app (v1.0.0 → v1.1.0).
+
+### Checkpoint 1 — Research + baseline
+- Baseline screenshots (bench/flight/FPV/wing/octo/whoop) + VLM art-director critique:
+  floating-sticker look, flat 3-tone shading, no sky/atmosphere, no craft shadow in flight,
+  crude white prop circles, empty indoor void, debug-looking pylons.
+- Research agent returned a technique list (layer split, hard-stop bands, gradient-falloff
+  shadows, atmospheric perspective, prop discs, mow stripes; sources: MDN, Sara Soueidan,
+  Slynyrd, Rough.js, web.dev rendering performance).
+
+### Checkpoint 2 — Engine + scenes upgraded
+- `core.ts`: 3-tone `tone()`/`toneIn()` → **8-band cel ramp** (cool indigo shadows, warm cream
+  sheen, optional specular cap; memoised per material; tolerant of partial Tone objects —
+  the partial-tone crash was found + fixed via enriched window.onerror stack in dev).
+  `castShadow` → shared gradient `#dlsh` (dark at base, fading at tip) + `a`/`grow` opts.
+  `board3` bevel highlights. `vfxDefOnce`/`vfxReset` per-render-pass def dedup.
+- New `engine/vfx.ts`: sky band (hills, sun glow, drifting clouds, birds) / **indoor wall**
+  (wallpaper stripes, framed pictures), haze overlay, mow stripes + seeded grass tufts +
+  flowers (or planks / paving by ground colour), cloud shadows, contact-AO discs, downwash
+  rings, tree canopy lumps, fluttering pylon pennants, vignette, scanlines.
+- `oshapes.ts`: shared `propDisc()` (blur disc + ghost blades + tip streaks) — all 13 crafts
+  migrated off the white-circle hack (12 via a subagent following the quad5 reference edit).
+- Flight iso: atmosphere behind the field, distance fog on solids, contact shading, craft
+  cast shadow (altitude-scaled), goal rings glow + pulse, goal pointer redesigned as a
+  labelled pill (GOAL · 23M / GATE 2 · 12M).
+- FPV: gradient sky, world-anchored drifting clouds, sun from the light vector, layered hazy
+  hills, horizon fog band, corner prop arcs, vignette + subtle scanlines; indoor = warm
+  ceiling, no sun/clouds/hills/scanlines.
+- Bench: desk shadow under the mat, 20 mm sub-grid, ruler numbers, corner marks, mat legend,
+  wear scratches, light pool, back-edge AO, contact AO under motors, soft smoke gradients.
+- CSS: page vignette on the bench, hover lift on pills.
+
+### Checkpoint 3 — Verified
+- VLM before/after review: 6.5/10 → **8.5/10 "ready to ship"** (all round-1 complaints
+  confirmed fixed: grid through shadow, contact shadows, no banding, pylons read as pylons,
+  indoor wall fills the void).
+- 38/38 unit + 10/10 e2e green on the new renderer.
+- Media refreshed at 1280×900: 13 craft shots (+ **added the missing craft-quad5.png**,
+  which the README had linked to but never shipped), hero, wing/whoop/swarm flight shots,
+  14 s flight-demo.webm re-recorded. All verified non-blank + VLM-passed.
+
+### Checkpoint 4 — Release (v1.1.0)
+- Version 1.0.0 → 1.1.0; SW cache `dl-v1-1`; tag `v1.1.0`; release workflow with dist assets.
+
+**Resume point: v1.1.0 released. Next ideas: craft-level art detail pass (furniture legs,
+wing ink weight), gamepad support, deployment.**

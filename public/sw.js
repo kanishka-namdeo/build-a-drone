@@ -13,7 +13,7 @@
  */
 /* global self, caches, fetch, clients */
 
-const VERSION = 'dl-v1-0';
+const VERSION = 'dl-v1-1';
 const CACHE_NAME = `drone-lab-${VERSION}`;
 
 const PRECACHE_URLS = [

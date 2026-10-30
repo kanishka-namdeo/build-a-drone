@@ -10,12 +10,12 @@ https://github.com/kanishka-namdeo/build-a-drone
 
 ## What's inside
 
-- **13 hand-inked isometric drone figures** — from a 65 mm Tiny Whoop to a 12S heavy-lift octocopter — each drawn as live SVG with a wobbling "hand-inked" filter, cast shadows, and clickable part callouts.
+- **13 hand-inked isometric drone figures** — from a 65 mm Tiny Whoop to a 12S heavy-lift octocopter — each drawn as live SVG with a wobbling "hand-inked" filter, 8-band cel shading (cool shadows, warm sheen), gradient-falloff cast shadows, and clickable part callouts.
 - **A real workshop loop**: take it apart → add parts in order (polarised parts can be fitted *backwards* on purpose) → smoke-stopper test → motor direction check (one motor is deliberately wrong) → accelerometer calibration → plug in the battery. Make the classic mistakes and they bite: a reversed capacitor vents on plug-in, a backwards flight-controller arrow flips the quad on take-off.
 - **A design bench calculator**: batteries × motors × props → all-up weight, thrust-to-weight, hover throttle, max current, hover and freestyle flight time, cost split. The simulator's physics uses your numbers.
 - **Wiring diagrams** with clickable, colour-coded blocks (power / data / video / motor phases) for every craft.
-- **A flight simulator**: altitude-hold, angle, acro, gate racing, and per-craft autopilots and ranges — GPS Rescue, waypoint missions, a 10-phase delivery run with a winch, a lawn-mower spray mission, VTOL hover↔cruise transitions, a four-drone swarm formation, tail-servo tricopter yaw, and a motor-out octocopter that flies home on seven.
-- **Third-person isometric and FPV goggles views** — the FPV renderer has a full OSD: voltage, current, timer, altitude, speed, artificial horizon, navigation arrow.
+- **A flight simulator**: altitude-hold, angle, acro, gate racing, and per-craft autopilots and ranges — GPS Rescue, waypoint missions, a 10-phase delivery run with a winch, a lawn-mower spray mission, VTOL hover↔cruise transitions, a four-drone swarm formation, tail-servo tricopter yaw, and a motor-out octocopter that flies home on seven. The world has weather in it: drifting clouds with moving shadows, a sun, atmospheric haze, mown grass with tufts, lumpy trees, fluttering pylon pennants — and an indoor living room with walls, not a sky. The craft casts an altitude-softened shadow and stirs downwash rings when it hugs the grass.
+- **Third-person isometric and FPV goggles views** — the FPV renderer has a full OSD: voltage, current, timer, altitude, speed, artificial horizon, navigation arrow — plus lens vignette, scanlines, and prop arcs in the corners.
 - **Firmware-flavoured consoles**: Betaflight / ArduPilot / INAV / cflib / MAVSDK snippets and a serial log that narrates everything you do.
 - **Check-yourself quizzes** with persisted answers, and a practice task per craft.
 - **PWA**: installable, works offline (service worker with cache-first assets, network-first documents).
