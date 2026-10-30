@@ -6,7 +6,7 @@
 import { Vec3, Tone, INK } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube, servoPiece } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, servoPiece, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, TIN } from '../engine/materials';
 import { craftAnim } from './anim';
 import type { CraftRecord, DrawOpt, DrawAdd, FlightState, PhysCtx } from '../types';
@@ -380,7 +380,8 @@ export const tricopter: CraftRecord = {
         const P = FR.Rz(FR.T(F, px, py, pz), rad(px === 0 ? servoDeg : 0));
         const rate = (opt.rpm[spinIdx] as number) ?? 0;
         if (rate > 0.12) {
-          add([px, py, pz + 2], `<circle cx="0" cy="0" r="63" fill="#fff" opacity="${(0.18 + 0.22 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.06)"/>`, 'PROPS');
+          // prop blur disc + ghost blades + tip streaks
+          add([px, py, pz + 2], propDisc(P, 63, rate, opt.spin[spinIdx] * (ccw ? -1 : 1)), 'PROPS');
         } else {
           let svg = '';
           const spin = opt.spin[spinIdx] || 0;

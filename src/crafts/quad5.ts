@@ -18,7 +18,7 @@ import {
 } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube, glowDot } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, glowDot, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, LEDBODY, TIN } from '../engine/materials';
 import type { CraftRecord, DrawOpt, DrawAdd } from '../types';
 
@@ -379,12 +379,8 @@ export const quad5: CraftRecord = {
         const P = FR.T(F, mx, my, 24);
         const rate = opt.rpm[i] || 0;
         if (rate > 0.12) {
-          // prop blur disc
-          add(
-            [mx, my, 26],
-            `<ellipse cx="0" cy="0" rx="63" ry="63" fill="#fff" opacity="${(0.18 + 0.22 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${(P.o[1]).toFixed(1)}) scale(0.1)"/>`,
-            'PROPS'
-          );
+          // prop blur disc + ghost blades + tip streaks
+          add([mx, my, 26], propDisc(P, 63, rate, opt.spin[i] * (ccw ? -1 : 1)), 'PROPS');
         } else {
           let svg = '';
           const spin = opt.spin[i] || 0;

@@ -10,7 +10,7 @@
 import { Vec3, Tone, INK, tag as tagPill } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, TIN } from '../engine/materials';
 import { craftAnim } from './anim';
 import type { CraftRecord, DrawOpt, DrawAdd, FlightState, PhysCtx } from '../types';
@@ -568,7 +568,8 @@ export const vtol: CraftRecord = {
           const P = FR.T(M, 0, 0, 34);
           const rate = (side === -1 ? (opt.rpm[0] ?? 0) : (opt.rpm[1] ?? 0)) as number;
           if (rate > 0.12) {
-            add([side * 150, -18, 30], `<circle cx="0" cy="0" r="58" fill="#fff" opacity="${(0.16 + 0.2 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.06)"/>`, 'PROPS');
+            // prop blur disc + ghost blades + tip streaks
+            add([side * 150, -18, 30], propDisc(P, 58, rate, opt.spin[side === -1 ? 0 : 1] || 0), 'PROPS');
           } else {
             let psvg = '';
             for (let b = 0; b < 2; b++) {
@@ -588,7 +589,8 @@ export const vtol: CraftRecord = {
         const P = FR.T(R, 0, 0, 32);
         const rate = (opt.rpm[2] as number) ?? 0;
         if (rate > 0.12) {
-          add([-20, 210, 30], `<circle cx="0" cy="0" r="58" fill="#fff" opacity="${(0.16 + 0.2 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.06)"/>`, 'PROPS');
+          // prop blur disc + ghost blades + tip streaks
+          add([-20, 210, 30], propDisc(P, 58, rate, opt.spin[2] || 0), 'PROPS');
         } else {
           let psvg = '';
           for (let b = 0; b < 2; b++) {

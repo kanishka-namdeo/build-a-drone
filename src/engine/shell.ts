@@ -21,7 +21,8 @@ import {
   inkScaleSvg,
   setInkScaleRef,
   inkScale,
-  paperGrainDataUri
+  paperGrainDataUri,
+  vfxReset
 } from './core';
 import { AudioSys } from './audio';
 
@@ -99,7 +100,7 @@ function trackError(msg: string): void {
   document.documentElement.setAttribute('data-errors', errorLog.join('|'));
 }
 
-window.addEventListener('error', (e) => trackError(String(e.message)));
+window.addEventListener('error', (e) => trackError(String(e.message) + ' :: ' + String((e as ErrorEvent).error?.stack ?? '').split('\n').slice(0, 5).join(' ¦ ')));
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, html?: string): HTMLElementTagNameMap[K] {
   const n = document.createElement(tag);
@@ -234,6 +235,7 @@ export function mountFigure(cfg: ShellCfg): ShellUi {
       document.documentElement.style.setProperty('--lab-accent', m.l);
       applyPan();
       setInkScaleRef(INKK);
+      vfxReset(); // shared vfx gradients may re-emit in this pass
       const sceneSvg = cfg.scene(st, m); // may reframe via ui.setViewBox / setInkK
       defs.innerHTML = handInkFilter(INKK);
       art.innerHTML = inkScaleSvg(sceneSvg, INKK);

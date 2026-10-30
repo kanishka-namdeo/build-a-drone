@@ -53,6 +53,8 @@ export interface World {
   brief: string;
   camTilt: number;
   alt: boolean;
+  /** Indoor range (living room etc.): warm walls instead of sky/clouds. */
+  indoor?: boolean;
 }
 
 export const DEFAULT_GATES: Array<[number, number, number]> = [
@@ -73,6 +75,7 @@ export function buildWorld(range: {
   alt?: boolean;
   camTilt?: number;
   keepGates?: boolean;
+  indoor?: boolean;
   prims?: WorldPrim[];
   goals?: Goal[];
 }): World {
@@ -155,7 +158,8 @@ export function buildWorld(range: {
     title: range.title,
     brief: range.brief,
     camTilt: range.camTilt ?? 25,
-    alt: range.alt ?? true
+    alt: range.alt ?? true,
+    indoor: range.indoor ?? false
   };
 }
 

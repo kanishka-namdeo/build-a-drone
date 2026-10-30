@@ -10,7 +10,7 @@
 import { Vec3, Tone, INK } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, TIN } from '../engine/materials';
 import type { CraftRecord, DrawOpt, DrawAdd, FlightState, PhysCtx } from '../types';
 
@@ -450,7 +450,8 @@ export const agrihexa: CraftRecord = {
         const P = FR.T(F, mx, my, s(52));
         const rate = opt.rpm[i] || 0;
         if (rate > 0.12) {
-          add([mx, my, s(60)], `<circle cx="0" cy="0" r="${s(150)}" fill="#fff" opacity="${(0.15 + 0.2 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.02)"/>`, 'PROPS');
+          // prop blur disc + ghost blades + tip streaks
+          add([mx, my, s(60)], propDisc(P, s(150), rate, opt.spin[i] * (ccw ? -1 : 1)), 'PROPS');
         } else {
           let svg = '';
           const spin = opt.spin[i] || 0;

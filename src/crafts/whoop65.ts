@@ -9,7 +9,7 @@
 import { Vec3, Tone, INK, path3, ink, fillPath } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube, glowDot } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, glowDot, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, TIN } from '../engine/materials';
 import type { CraftRecord, DrawOpt, DrawAdd } from '../types';
 
@@ -304,7 +304,8 @@ export const whoop65: CraftRecord = {
         const P = FR.T(F, mx, my, 11);
         const rate = opt.rpm[i] || 0;
         if (rate > 0.12) {
-          add([mx, my, 12], `<circle cx="0" cy="0" r="15" fill="#fff" opacity="${(0.18 + 0.22 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.06)"/>`, 'PROPS');
+          // prop blur disc + ghost blades + tip streaks
+          add([mx, my, 12], propDisc(P, 15, rate, opt.spin[i] * (ccw ? -1 : 1)), 'PROPS');
         } else {
           let svg = '';
           const spin = opt.spin[i] || 0;
@@ -401,6 +402,7 @@ save`,
 
   range: {
     title: 'The living room',
+    indoor: true,
     brief: 'Under the table, between the chairs, round the lamp, over the sofa, land.',
     field: 8,
     pad: [4, 1.2],

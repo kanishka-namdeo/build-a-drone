@@ -63,6 +63,20 @@ header span {
   min-height: 340px;
 }
 
+/* soft page vignette on the bench (flight scenes vignette themselves) */
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: -4%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 42%, transparent 58%, rgba(35, 30, 22, 0.075) 100%);
+  z-index: 1;
+}
+
+.stage.flying::after {
+  background: none;
+}
+
 #fig {
   width: 100%;
   overflow: visible;
@@ -117,10 +131,13 @@ button {
 
 .act:hover {
   background: color-mix(in srgb, var(--ink) 8%, var(--paper));
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 
 .act:active {
   transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .act.car::after {

@@ -21,7 +21,8 @@ import {
   toneIn,
   textMatrix,
   convexHull,
-  clamp01
+  clamp01,
+  vfxDefOnce
 } from './core';
 import { Frame, FR } from './frames';
 
@@ -113,6 +114,64 @@ export function otext(f: Frame, x: number, y: number, z: number, str: string, si
     `<text transform="${textMatrix(FR.pt(f, [x, y, z]), U, V)}" font-family="ui-monospace,Menlo,monospace" ` +
     `font-size="${size}" font-weight="800" fill="${col}" text-anchor="middle" letter-spacing="0.04em">${str.replace(/&/g, '&amp;').replace(/</g, '&lt;')}</text>`
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* spinning props                                                      */
+/* ------------------------------------------------------------------ */
+
+/** The shared prop-blur gradient (rate-independent; opacity goes on elements). */
+export function propBlurDef(): string {
+  return vfxDefOnce(
+    'dlpb',
+    '<defs><radialGradient id="dlpb">' +
+      '<stop offset="0" stop-color="#ffffff" stop-opacity="0"/>' +
+      '<stop offset="0.2" stop-color="#ffffff" stop-opacity="0.05"/>' +
+      '<stop offset="0.55" stop-color="#ffffff" stop-opacity="0.3"/>' +
+      '<stop offset="0.92" stop-color="#ffffff" stop-opacity="0.16"/>' +
+      '<stop offset="1" stop-color="#ffffff" stop-opacity="0"/>' +
+      '</radialGradient></defs>'
+  );
+}
+
+/**
+ * A spinning propeller: translucent blur disc (shared radial gradient),
+ * ghost blades at staggered angles and bright tip streaks. `f` is a frame at
+ * the prop hub with the prop in the local xy plane; `r` is the prop radius in
+ * model units; `rate` 0..1 is the throttle-ish spin amount.
+ */
+export function propDisc(f: Frame, r: number, rate: number, spin = 0): string {
+  const disc: Vec3[] = [];
+  for (let i = 0; i < 18; i++) {
+    const a = (i / 18) * Math.PI * 2;
+    disc.push(FR.pt(f, [Math.cos(a) * r, Math.sin(a) * r, 0]));
+  }
+  let svg = propBlurDef() + `<g opacity="${(0.65 + 0.45 * rate).toFixed(2)}">` + fillPath(path3(disc), 'url(#dlpb)') + '</g>';
+  // ghost blades
+  for (let b = 0; b < 3; b++) {
+    const a = spin + (b * Math.PI * 2) / 3 + 0.35;
+    const ca = Math.cos(a);
+    const sa = Math.sin(a);
+    const w = r * 0.085;
+    const pts: Vec3[] = [
+      FR.pt(f, [ca * r * 0.14 - sa * w, sa * r * 0.14 + ca * w, 0]),
+      FR.pt(f, [ca * r * 0.98 - sa * w, sa * r * 0.98 + ca * w, 0]),
+      FR.pt(f, [ca * r * 0.98 + sa * w, sa * r * 0.98 - ca * w, 0]),
+      FR.pt(f, [ca * r * 0.14 + sa * w, sa * r * 0.14 - ca * w, 0])
+    ];
+    svg += fillPath(path3(pts), '#ffffff').replace('<path ', '<path opacity="0.16" ');
+  }
+  // tip streaks
+  for (const off of [0, Math.PI]) {
+    const a0 = spin * 1.5 + off;
+    const arc: Vec3[] = []
+    for (let j = 0; j <= 8; j++) {
+      const a = a0 + (j / 8) * 1.15;
+      arc.push(FR.pt(f, [Math.cos(a) * r * 0.97, Math.sin(a) * r * 0.97, 0]));
+    }
+    svg += `<path d="${path3(arc, false)}" fill="none" stroke="#ffffff" stroke-width="${(r * 0.07).toFixed(1)}" stroke-linecap="round" opacity="0.4"/>`;
+  }
+  return svg;
 }
 
 /* ------------------------------------------------------------------ */

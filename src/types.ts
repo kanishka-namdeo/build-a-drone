@@ -201,6 +201,8 @@ export interface RangeSpec {
   goals?: Goal[];
   camTilt?: number;
   code?: string;
+  /** Indoor range: warm walls/ceiling instead of sky, clouds and hills. */
+  indoor?: boolean;
 }
 
 export interface FlightState {

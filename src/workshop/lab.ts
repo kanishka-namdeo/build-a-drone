@@ -11,6 +11,7 @@ import {
   Vec3,
   Tone,
   PALETTES,
+  INK,
   setPan,
   getPan,
   inkScale,
@@ -21,6 +22,8 @@ import {
   ink,
   fillPath,
   poly3,
+  textTop,
+  vfxDefOnce,
   tag as tagPill,
   act,
   project,
@@ -28,6 +31,7 @@ import {
 } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import { drainGlows } from '../engine/oshapes';
+import { mulberry32, vignette, aoDisc } from '../engine/vfx';
 import { mountFigure, esc } from '../engine/shell';
 import type { ShellUi, ShellState } from '../engine/shell';
 import { AudioSys } from '../engine/audio';
@@ -703,12 +707,60 @@ function benchScene(_st: ShellState, m: Tone): string {
 
   const MAT = DR.mat ?? 280;
   const { svg: matSvg, top } = board3(0, 0, MAT, MAT, 4, 8);
-  // 40 mm grid
+  // desk shadow under the mat: grounds the whole bench on the paper
+  const [bx, by] = project([0, 0, 0]);
+  const [bx1, by1] = project([MAT, MAT, 0]);
+  const deskShadow =
+    `<ellipse cx="${((bx + bx1) / 2 + 7).toFixed(1)}" cy="${((by + by1) / 2 + 9).toFixed(1)}" rx="${((bx1 - bx) / 2 * 0.98).toFixed(1)}" ry="${((by1 - by) / 2 * 1.0).toFixed(1)}" fill="rgba(65,83,143,0.10)"/>` +
+    `<ellipse cx="${((bx + bx1) / 2 + 3).toFixed(1)}" cy="${((by + by1) / 2 + 4).toFixed(1)}" rx="${((bx1 - bx) / 2 * 0.96).toFixed(1)}" ry="${((by1 - by) / 2 * 0.98).toFixed(1)}" fill="rgba(65,83,143,0.12)"/>`;
+  // 40 mm grid + 20 mm sub-grid + ruler numbers + corner marks + wear
   let grid = '';
-  for (let v = 40; v < MAT; v += 40) {
-    grid += ink(path3([[v, 0, 4.1], [v, MAT, 4.1]]), 0.6);
-    grid += ink(path3([[0, v, 4.1], [MAT, v, 4.1]]), 0.6);
+  for (let v = 20; v < MAT; v += 20) {
+    const major = v % 40 === 0;
+    grid += `<path d="${path3([[v, 0, 4.1], [v, MAT, 4.1]])}" fill="none" stroke="${INK}" stroke-width="${major ? 0.6 : 0.35}" opacity="${major ? 0.55 : 0.22}"/>`;
+    grid += `<path d="${path3([[0, v, 4.1], [MAT, v, 4.1]])}" fill="none" stroke="${INK}" stroke-width="${major ? 0.6 : 0.35}" opacity="${major ? 0.55 : 0.22}"/>`;
   }
+  // ruler numbers along the two front edges (cm, like a real cutting mat)
+  for (let v = 40; v < MAT; v += 40) {
+    grid += textTop(v, MAT - 7, 4.2, String(v / 40), 5.5, 'rgba(35,30,22,0.5)', 700);
+    grid += textTop(7, v, 4.2, String(v / 40), 5.5, 'rgba(35,30,22,0.5)', 700, true);
+  }
+  // corner crop marks
+  for (const [cx, cy, dx, dy] of [
+    [10, 10, 1, 1],
+    [MAT - 10, 10, -1, 1],
+    [10, MAT - 10, 1, -1],
+    [MAT - 10, MAT - 10, -1, -1]
+  ] as const) {
+    grid += ink(path3([[cx, cy, 4.2], [cx + 7 * dx, cy, 4.2]], false), 0.8) + ink(path3([[cx, cy, 4.2], [cx, cy + 7 * dy, 4.2]], false), 0.8);
+  }
+  // mat legend + a little wear
+  grid += textTop(MAT / 2, MAT - 16, 4.2, 'DRONE LAB · SELF-HEALING A2', 6, 'rgba(35,30,22,0.4)', 800);
+  const wearRng = mulberry32(DR.fig * 31 + 7);
+  for (let i = 0; i < 3; i++) {
+    const wx = 24 + wearRng() * (MAT - 48);
+    const wy = 24 + wearRng() * (MAT - 48);
+    const a0 = wearRng() * Math.PI * 2;
+    const len = 0.3 + wearRng() * 0.5;
+    const pts: Vec3[] = [];
+    for (let j = 0; j <= 6; j++) {
+      const a = a0 + (j / 6) * len;
+      pts.push([wx + Math.cos(a) * 14, wy + Math.sin(a) * 11, 4.2]);
+    }
+    grid += `<path d="${path3(pts, false)}" fill="none" stroke="${INK}" stroke-width="0.5" opacity="0.13"/>`;
+  }
+  // soft light pool over the mat (clipped to the top face) + back-edge shading
+  const [cx0, cy0] = project([0, 0, 4]);
+  const [cx1, cy1] = project([MAT, MAT, 4]);
+  const poolDef = vfxDefOnce(
+    'dlpool',
+    `<defs><radialGradient id="dlpool" cx="0.58" cy="0.34" r="0.8"><stop offset="0" stop-color="#ffffff" stop-opacity="0.38"/><stop offset="0.6" stop-color="#ffffff" stop-opacity="0.12"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient></defs>`
+  );
+  const pool =
+    `<rect x="${Math.min(cx0, cx1).toFixed(0)}" y="${Math.min(cy0, cy1).toFixed(0)}" width="${Math.abs(cx1 - cx0).toFixed(0)}" height="${Math.abs(cy1 - cy0).toFixed(0)}" fill="url(#dlpool)"/>`;
+  const edgeAO =
+    `<path d="${path3([[0, 0, 4.15], [MAT, 0, 4.15]], false)}" fill="none" stroke="rgba(44,36,24,0.16)" stroke-width="5"/>` +
+    `<path d="${path3([[0, 0, 4.15], [0, MAT, 4.15]], false)}" fill="none" stroke="rgba(44,36,24,0.16)" stroke-width="5"/>`;
 
   const benchZ = 0;
   const F = FR.Rz(FR.I(MAT / 2, MAT / 2, 4 + benchZ), rad(0));
@@ -739,6 +791,14 @@ function benchScene(_st: ShellState, m: Tone): string {
   // shadow
   const hullPts = DR.hull(F);
   const shadow = castShadow(hullPts, 4);
+
+  // contact shading: soft darkening right under the motors + hull centre,
+  // so the craft reads as sitting ON the mat rather than hovering over it
+  let contact = '';
+  if (isPlaced('MOTORS')) {
+    for (const [mx, my] of DR.mpos) contact += aoDisc([MAT / 2 + mx, MAT / 2 + my, 4.3], 18, 0.85);
+  }
+  if (Object.keys(D.placed).length) contact += aoDisc([MAT / 2, MAT / 2, 4.3], MAT * 0.3, 0.5);
 
   // parts: depth sort + click wrappers
   const wrapped = parts
@@ -790,12 +850,15 @@ function benchScene(_st: ShellState, m: Tone): string {
     }
   }
 
-  // smoke puffs
-  let smokeSvg = '';
+  // smoke puffs (soft radial gradients)
+  let smokeSvg = vfxDefOnce(
+    'dlsmoke',
+    '<defs><radialGradient id="dlsmoke"><stop offset="0" stop-color="#5a5650" stop-opacity="0.5"/><stop offset="0.7" stop-color="#5a5650" stop-opacity="0.22"/><stop offset="1" stop-color="#5a5650" stop-opacity="0"/></radialGradient></defs>'
+  );
   for (const s of D.smoke) {
     const [sx, sy] = project([MAT / 2 + s.x, MAT / 2 + s.y, s.z + s.age * 14]);
-    const r = 4 + s.age * 10;
-    smokeSvg += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${r.toFixed(1)}" fill="rgba(90,86,80,${(0.4 * (1 - s.age / 2)).toFixed(2)})"/>`;
+    const r = 4 + s.age * 12;
+    smokeSvg += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${r.toFixed(1)}" fill="url(#dlsmoke)" opacity="${(1 - s.age / 2).toFixed(2)}"/>`;
   }
 
   // tags
@@ -809,7 +872,7 @@ function benchScene(_st: ShellState, m: Tone): string {
     }
   }
 
-  return matSvg + clipTo(top, grid + shadow) + wrapped.map((w) => w.svg).join('') + testSvg + smokeSvg + drainGlows() + tags;
+  return deskShadow + matSvg + poolDef + clipTo(top, edgeAO + contact + shadow + grid + pool) + wrapped.map((w) => w.svg).join('') + testSvg + smokeSvg + drainGlows() + tags;
 }
 
 function benchSpin(): number[] {
@@ -829,7 +892,7 @@ function flyScene(_st: ShellState, m: Tone): string {
   const accent = (PALETTES[D.pal] || PALETTES.mustard).l;
   const world = drawWorldIso(WORLD, fl, accent);
   const craft = drawCraftFlight(DR, fl, m, D.design, true);
-  return world + craft.svg + craft.groundDot + goalPointer(WORLD, fl, accent) + drainGlows();
+  return world + craft.svg + craft.groundDot + goalPointer(WORLD, fl, accent) + vignette(vb, isPhone() ? vb * 1.05 : vb * 0.75, 0.4) + drainGlows();
 }
 
 function fpvSceneWrap(_st: ShellState, _m: Tone): string {

@@ -19,7 +19,7 @@ import {
 } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube, glowDot } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, glowDot, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, LEDBODY, TIN, GOLD } from '../engine/materials';
 import type { StatItem } from '../engine/shell';
 import type { CraftRecord, DrawOpt, DrawAdd } from '../types';
@@ -53,16 +53,6 @@ const BATT_LOOK: Record<string, { col: string; lab: string; long: number; h: num
   '4s1100': { col: '#2b2a28', lab: '4S 1100', long: 44, h: 26 },
   '4s850': { col: '#3a5f3a', lab: '4S 850', long: 38, h: 22 },
   '6s850': { col: '#2f5fa8', lab: '6S 850', long: 41, h: 24 }
-};
-
-/** Prop blur disc: translucent white ellipse in the prop plane. */
-const blurDisc = (P: Frame, r: number, rate: number): string => {
-  const pts: Vec3[] = [];
-  for (let j = 0; j < 18; j++) {
-    const a = (j / 18) * Math.PI * 2;
-    pts.push(FR.pt(P, [Math.cos(a) * r, Math.sin(a) * r, 0]));
-  }
-  return `<path d="${path3(pts)}" fill="#ffffff" opacity="${(0.16 + 0.22 * rate).toFixed(2)}"/>`;
 };
 
 export const cine35: CraftRecord = {
@@ -433,7 +423,7 @@ export const cine35: CraftRecord = {
         const ccw = (dir === 'CCW') !== swapped;
         const rate = opt.rpm[i] || 0;
         if (rate > 0.12) {
-          add([mx, my, 65], blurDisc(FR.T(F, mx, my, pz + 1), 40, rate), 'PROPS');
+          add([mx, my, 65], propDisc(FR.T(F, mx, my, pz + 1), 40, rate, opt.spin[i] ?? 0), 'PROPS');
           return;
         }
         const P = FR.T(F, mx, my, pz);

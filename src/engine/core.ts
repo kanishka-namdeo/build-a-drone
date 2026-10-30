@@ -15,11 +15,13 @@
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 
-/** A three-tone material: light / mid / dark faces. */
+/** A three-tone material: light / mid / dark faces (+ optional specular cap). */
 export interface Tone {
   l: string;
   m: string;
   d: string;
+  /** Brightest band colour (sheen). Defaults to a warm-tinted `l`. */
+  hl?: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -47,7 +49,7 @@ export const PAPER = '#f2efe7';
 
 /** Derive a three-tone material from a single base colour. */
 export function matOf(hex: string): Tone {
-  return { l: hex, m: mix(hex, '#000000', 0.16), d: mix(hex, '#000000', 0.42) };
+  return { l: hex, m: mix(hex, '#000000', 0.16), d: mix(hex, '#000000', 0.42), hl: mix(hex, '#fffdf2', 0.42) };
 }
 
 /** Channel-wise linear blend of two hex colours. */
@@ -231,20 +233,79 @@ function dot3(a: Vec3, b: Vec3): number {
   return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 }
 
+/*
+ * Cel-shaded tone ramp: every material is expanded into BANDS colours —
+ * shadows drift toward a cool indigo, highlights toward warm cream (the way
+ * ink illustrations actually shade), with an optional specular cap band.
+ * Ramps are memoised per material so repeated faces cost nothing.
+ */
+const BANDS = 8;
+const rampCache = new Map<string, string[]>();
+
+function rampOf(t: Tone): string[] {
+  // Some craft code passes partial tones (e.g. only l + m); fill the gaps.
+  const l = t.l ?? t.m ?? '#cccccc';
+  const m = t.m ?? l;
+  const d = t.d ?? mix(m, '#000000', 0.38);
+  const key = `${l}|${m}|${d}|${t.hl ?? ''}`;
+  let r = rampCache.get(key);
+  if (r) return r;
+  const dCool = mix(d, '#3d4a7a', 0.26); // cool shadow tint
+  const lWarm = mix(l, '#fff6e2', 0.34); // warm highlight tint
+  r = [];
+  for (let i = 0; i < BANDS; i++) {
+    const u = i / (BANDS - 1); // 0 = darkest band
+    r.push(u < 0.5 ? mix(dCool, m, ease(u * 2)) : mix(m, lWarm, ease((u - 0.5) * 2)));
+  }
+  r[BANDS - 1] = t.hl ?? lWarm; // brightest band = sheen
+  if (rampCache.size > 400) rampCache.clear();
+  rampCache.set(key, r);
+  return r;
+}
+
+function bandOf(d: number, lo: number, hi: number): number {
+  const u = clamp01((d - lo) / (hi - lo));
+  return Math.min(BANDS - 1, Math.round(u * (BANDS - 1)));
+}
+
 /** Exterior shading: sunlit look, front lit / left in shade. */
 export function tone(n: Vec3, t: Tone): string {
-  const d = dot3(n, LIGHT);
-  if (d > -0.15) return t.l;
-  if (d > -0.45) return t.m;
-  return t.d;
+  return rampOf(t)[bandOf(dot3(n, LIGHT), -0.8, 0.78)];
 }
 
 /** Interior shading for small props (harsher falloff). */
 export function toneIn(n: Vec3, t: Tone): string {
-  const d = dot3(n, LIGHT_IN);
-  if (d > 0.6) return t.l;
-  if (d > 0.05) return t.m;
-  return t.d;
+  return rampOf(t)[bandOf(dot3(n, LIGHT_IN), -0.75, 0.85)];
+}
+
+/* ------------------------------------------------------------------ */
+/* shared vfx defs (gradients etc., emitted once per render pass)      */
+/* ------------------------------------------------------------------ */
+
+const vfxEmitted = new Set<string>();
+
+/** Start a new render pass: shared defs may be emitted again. */
+export function vfxReset(): void {
+  vfxEmitted.clear();
+}
+
+/** Return `markup` the first time `id` is requested in this pass, else ''. */
+export function vfxDefOnce(id: string, markup: string): string {
+  if (vfxEmitted.has(id)) return '';
+  vfxEmitted.add(id);
+  return markup;
+}
+
+/** Cast-shadow gradient (screen-space direction matches SH_DIR: lower-left). */
+export function shadowGradDef(): string {
+  return vfxDefOnce(
+    'dlsh',
+    '<defs><linearGradient id="dlsh" x1="0.8" y1="0.32" x2="0.1" y2="0.74">' +
+      '<stop offset="0" stop-color="#41538f" stop-opacity="0.5"/>' +
+      '<stop offset="0.55" stop-color="#41538f" stop-opacity="0.3"/>' +
+      '<stop offset="1" stop-color="#41538f" stop-opacity="0.04"/>' +
+      '</linearGradient></defs>'
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -456,20 +517,42 @@ function esc(s: string): string {
 
 const SHADOW_SHORTEN = 0.53; // cast shadows deliberately shortened
 
+export interface ShadowOpts {
+  /** Overall strength (default 1). */
+  a?: number;
+  /** Penumbra growth: hull is inflated about its centroid by this factor. */
+  grow?: number;
+}
+
 /**
  * Cast shadow of `pts3` onto plane z = z0 (a 2D hull fill). The light is fixed
- * relative to the viewer, so shadows skew consistently to the lower-left.
+ * relative to the viewer, so shadows skew consistently to the lower-left. The
+ * fill is a shared gradient — darkest at the object's base, fading to nothing
+ * at the tip, so it reads as a soft shadow without any filters.
  */
-export function castShadow(pts3: Vec3[], z0 = 0, clip: string | null = null): string {
+export function castShadow(pts3: Vec3[], z0 = 0, clip: string | null = null, opts: ShadowOpts = {}): string {
+  const a = opts.a ?? 1;
+  const grow = opts.grow ?? 0;
   const scr: Vec2[] = pts3.map((p) => {
     const h = (p[2] - z0) * SHADOW_SHORTEN;
     return project([p[0] + SH_DIR[0] * h, p[1] + SH_DIR[1] * h, z0]);
   });
-  const h = convexHull(scr);
+  let h = convexHull(scr);
   if (h.length < 3) return '';
+  if (grow > 0) {
+    let cx = 0;
+    let cy = 0;
+    for (const p of h) {
+      cx += p[0];
+      cy += p[1];
+    }
+    cx /= h.length;
+    cy /= h.length;
+    h = h.map((p) => [cx + (p[0] - cx) * (1 + grow), cy + (p[1] - cy) * (1 + grow)] as Vec2);
+  }
   const d = path2(h);
-  const g = clip ? `<g clip-path="url(#${clip})">` : '<g>';
-  return `${g}${fillPath(d, SHADOW_COL)}</g>`;
+  const g = clip ? `<g clip-path="url(#${clip})" opacity="${a.toFixed(3)}">` : `<g opacity="${a.toFixed(3)}">`;
+  return shadowGradDef() + `${g}${fillPath(d, 'url(#dlsh)')}</g>`;
 }
 
 /** Flat disc on a horizontal plane (no ink). */
@@ -488,6 +571,15 @@ export function board3(x0: number, y0: number, x1: number, y1: number, h = 3, r 
   const bot = on(planeZ(0), rrUV(x0, y0, x1, y1, r)).map((p) => p as Vec3);
   let svg = loft(bot, top, t);
   svg += fillPath(path3(top), t.l) + ink(path3(top), 1);
+  // bevel: light rim on the two front top edges, shade on the back edges
+  const eF: Vec3[] = [[x0, y1, h], [x1, y1, h]];
+  const eR: Vec3[] = [[x1, y0, h], [x1, y1, h]];
+  svg += `<path d="${path3(eF, false)}" fill="none" stroke="${mix(t.l, '#ffffff', 0.55)}" stroke-width="1.4" stroke-linecap="round" opacity="0.8"/>`;
+  svg += `<path d="${path3(eR, false)}" fill="none" stroke="${mix(t.l, '#ffffff', 0.45)}" stroke-width="1.2" stroke-linecap="round" opacity="0.7"/>`;
+  const eB: Vec3[] = [[x0, y0, h], [x1, y0, h]];
+  const eL: Vec3[] = [[x0, y0, h], [x0, y1, h]];
+  svg += `<path d="${path3(eB, false)}" fill="none" stroke="${mix(t.d, '#3d4a7a', 0.3)}" stroke-width="1.1" stroke-linecap="round" opacity="0.45"/>`;
+  svg += `<path d="${path3(eL, false)}" fill="none" stroke="${mix(t.d, '#3d4a7a', 0.3)}" stroke-width="1.1" stroke-linecap="round" opacity="0.45"/>`;
   svg += hullInk([...top, ...bot], 1.8);
   return { svg, top };
 }

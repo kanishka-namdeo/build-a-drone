@@ -8,10 +8,10 @@
  * a timing arch, a dive tower and a hurdle. Race is the default flight mode.
  */
 
-import { Vec3, Tone, INK, matOf, project, path3, ink, fillPath } from '../engine/core';
+import { Vec3, Tone, INK, matOf, path3, ink, fillPath } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube, glowDot } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, glowDot, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, LEDBODY, TIN, GOLD } from '../engine/materials';
 import { AudioSys } from '../engine/audio';
 import { Progress } from '../engine/storage';
@@ -445,12 +445,8 @@ export const race5: CraftRecord = {
         const P = FR.T(F, mx, my, 23);
         const rate = opt.rpm[i] || 0;
         if (rate > 0.12) {
-          const [dx, dy] = project([P.o[0], P.o[1], P.o[2]]);
-          add(
-            [mx, my, 25],
-            `<ellipse cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" rx="${(63 * opt.k).toFixed(0)}" ry="${(63 * opt.k).toFixed(0)}" fill="#fff" opacity="${(0.14 + 0.18 * rate).toFixed(2)}"/>`,
-            'PROPS'
-          );
+          // prop blur disc + ghost blades + tip streaks
+          add([mx, my, 25], propDisc(P, 63, rate, opt.spin[i] * (ccw ? -1 : 1)), 'PROPS');
         } else {
           let svg = '';
           const spin = opt.spin[i] || 0;

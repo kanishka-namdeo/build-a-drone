@@ -11,7 +11,7 @@
 import { Vec3, Tone, INK } from '../engine/core';
 import { FR, rad } from '../engine/frames';
 import type { Frame } from '../engine/frames';
-import { obox, ocyl, odisc, otext, tube } from '../engine/oshapes';
+import { obox, ocyl, odisc, otext, tube, propDisc } from '../engine/oshapes';
 import { CARBON, PCB, SILK, WIRE, TIN } from '../engine/materials';
 import { craftAnim } from './anim';
 import type { CraftRecord, DrawOpt, DrawAdd, FlightState, PhysCtx } from '../types';
@@ -659,7 +659,8 @@ export const wing9: CraftRecord = {
       const P = FR.Rz(FR.T(F, -62, 0, 8), rad(90));
       const rate = opt.rpm[0] || 0;
       if (rate > 0.12) {
-        add([-62, 0, 8], `<circle cx="0" cy="0" r="52" fill="#fff" opacity="${(0.16 + 0.2 * rate).toFixed(2)}" transform="translate(${P.o[0].toFixed(1)} ${P.o[1].toFixed(1)}) scale(0.06)"/>`, 'PROPS');
+        // prop blur disc + ghost blades + tip streaks
+        add([-62, 0, 8], propDisc(P, 52, rate, opt.spin[0] || 0), 'PROPS');
       } else {
         let svg = '';
         const spin = opt.spin[0] || 0;
