@@ -989,9 +989,10 @@ let BOOT: LabBoot | null = null;
 
 export function startLab(crafts: CraftRecord[], roster: RosterEntry[]): void {
   BOOT = { crafts, roster };
-  mountDrone(location.hash.slice(1) || (crafts[0]?.key ?? ''));
+  const keyOf = (): string => (location.hash.replace(/^#\/?/, '').split('?')[0]) || (crafts[0]?.key ?? '');
+  mountDrone(keyOf());
   window.addEventListener('hashchange', () => {
-    mountDrone(location.hash.slice(1) || (crafts[0]?.key ?? ''));
+    mountDrone(keyOf());
   });
 }
 

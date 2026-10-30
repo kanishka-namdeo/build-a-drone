@@ -482,6 +482,10 @@ export function mountFigure(cfg: ShellCfg): ShellUi {
 
   // ---- url params + test hooks ---------------------------------------------
   const q = new URLSearchParams(location.search);
+  const hashQuery = location.hash.split('?')[1];
+  if (hashQuery) {
+    for (const [k, v] of new URLSearchParams(hashQuery)) q.append(k, v);
+  }
   const pal = q.get('pal');
   if (pal && PALETTES[pal]) st.pal = pal;
   if (q.get('labels') === '0') {
