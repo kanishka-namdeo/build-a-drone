@@ -16,6 +16,8 @@ export default defineConfig({
   },
   server: { port: 5173 },
   test: {
-    environment: 'node'
+    environment: 'node',
+    // Playwright specs live in tests/e2e and run via `npm run test:e2e`
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**']
   }
 } as never);
