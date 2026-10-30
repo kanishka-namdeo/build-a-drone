@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>Drone Lab — hand-inked isometric quadcopter</title>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <rect x="0" y="0" width="512" height="512" rx="0" fill="#f2efe7" stroke="none"/>
+    <ellipse cx="261.5" cy="416.1" rx="163.8" ry="23.9" fill="#231e16" stroke="none" opacity="0.13"/>
+    <line x1="246.8" y1="294.6" x2="143.8" y2="337" stroke="#231e16" stroke-width="15.6"/>
+    <line x1="265.2" y1="294.6" x2="368.2" y2="337" stroke="#231e16" stroke-width="15.6"/>
+    <line x1="245" y1="285.4" x2="156.6" y2="184.2" stroke="#231e16" stroke-width="15.6"/>
+    <line x1="267" y1="285.4" x2="355.4" y2="184.2" stroke="#231e16" stroke-width="15.6"/>
+    <rect x="126.3" y="330.5" width="23.9" height="27.6" rx="8.3" fill="#231e16" stroke="none"/>
+    <rect x="361.8" y="330.5" width="23.9" height="27.6" rx="8.3" fill="#231e16" stroke="none"/>
+    <rect x="137.3" y="161.2" width="23.9" height="27.6" rx="8.3" fill="#231e16" stroke="none"/>
+    <rect x="350.8" y="161.2" width="23.9" height="27.6" rx="8.3" fill="#231e16" stroke="none"/>
+    <ellipse cx="142.8" cy="152" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="7.4" opacity="0.3"/>
+    <ellipse cx="149.3" cy="154.8" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="10.1"/>
+    <ellipse cx="149.3" cy="154.8" rx="6.4" ry="6.4" fill="#ef6a4c" stroke="#231e16" stroke-width="4.6"/>
+    <ellipse cx="356.3" cy="152" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="7.4" opacity="0.3"/>
+    <ellipse cx="362.7" cy="154.8" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="10.1"/>
+    <ellipse cx="362.7" cy="154.8" rx="6.4" ry="6.4" fill="#ef6a4c" stroke="#231e16" stroke-width="4.6"/>
+    <path d="M178.7 303.8 L256 322.2 L256 333.3 L178.7 314.9 Z" fill="#e1dac7" stroke="#231e16" stroke-width="6.4"/>
+    <path d="M256 322.2 L333.3 303.8 L333.3 314.9 L256 333.3 Z" fill="#e1dac7" stroke="#231e16" stroke-width="6.4"/>
+    <path d="M256 285.4 L333.3 303.8 L256 322.2 L178.7 303.8 Z" fill="#fbf9f2" stroke="#231e16" stroke-width="8.3"/>
+    <rect x="226.6" y="267" width="58.9" height="36.8" rx="8.3" fill="#ef6a4c" stroke="#231e16" stroke-width="7.4"/>
+    <line x1="224.7" y1="287.3" x2="287.3" y2="287.3" stroke="#231e16" stroke-width="5.5"/>
+    <path d="M186.1 246.8 L256 262.4 L256 271.6 L186.1 256 Z" fill="#e1dac7" stroke="#231e16" stroke-width="6.4"/>
+    <path d="M256 262.4 L325.9 246.8 L325.9 256 L256 271.6 Z" fill="#e1dac7" stroke="#231e16" stroke-width="6.4"/>
+    <path d="M256 231.2 L325.9 246.8 L256 262.4 L186.1 246.8 Z" fill="#fbf9f2" stroke="#231e16" stroke-width="8.3"/>
+    <rect x="243.1" y="246.8" width="25.8" height="20.2" rx="5.5" fill="#231e16" stroke="none"/>
+    <ellipse cx="256" cy="256.9" rx="5.5" ry="5.5" fill="#ef6a4c" stroke="#231e16" stroke-width="3.7"/>
+    <ellipse cx="131.8" cy="321.3" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="7.4" opacity="0.3"/>
+    <ellipse cx="138.2" cy="324.1" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="10.1"/>
+    <ellipse cx="138.2" cy="324.1" rx="6.4" ry="6.4" fill="#ef6a4c" stroke="#231e16" stroke-width="4.6"/>
+    <ellipse cx="367.3" cy="321.3" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="7.4" opacity="0.3"/>
+    <ellipse cx="373.8" cy="324.1" rx="68.1" ry="13.8" fill="none" stroke="#231e16" stroke-width="10.1"/>
+    <ellipse cx="373.8" cy="324.1" rx="6.4" ry="6.4" fill="#ef6a4c" stroke="#231e16" stroke-width="4.6"/>
+  </g>
+</svg>

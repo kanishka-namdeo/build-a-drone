@@ -1,0 +1,9 @@
+# Drone Lab — robots.txt
+# The whole app is a client-side workshop, so allow everything.
+
+User-agent: *
+Allow: /
+
+# Sitemap placeholder — uncomment and point at the real sitemap once a
+# marketing/docs site exists:
+# Sitemap: https://kanishka-namdeo.github.io/build-a-drone/sitemap.xml

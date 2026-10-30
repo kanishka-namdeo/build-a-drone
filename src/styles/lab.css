@@ -1,0 +1,567 @@
+/* Drone Lab — workshop layout: side roster, lesson grid, terminals, sticks. */
+
+/* ---- page grid: side nav + content column ---- */
+
+.page {
+  max-width: 1060px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 30px;
+}
+
+.page .content {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- side nav ---- */
+
+.side {
+  position: sticky;
+  top: 0;
+  flex: 0 0 210px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.side h1 {
+  font-size: 21px;
+  font-weight: 800;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.side > p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.side a {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  grid-template-areas: 'fig name' 'fig sub';
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  line-height: 1.25;
+}
+
+.side a span {
+  grid-area: fig;
+  color: var(--muted);
+  font-size: 11px;
+  padding-top: 2px;
+}
+
+.side a b {
+  grid-area: name;
+  font-size: 12.5px;
+}
+
+.side a em {
+  grid-area: sub;
+  font-style: normal;
+  color: var(--muted);
+  font-size: 10.5px;
+}
+
+.side a:hover {
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+}
+
+.side a[aria-current='page'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.side a[aria-current='page'] span,
+.side a[aria-current='page'] em {
+  color: color-mix(in srgb, var(--paper) 70%, transparent);
+}
+
+.side small {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+/* ---- sections ---- */
+
+section h2 {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  margin: 10px 0 8px;
+}
+
+.wide.wiring .card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 6px;
+}
+
+.wide.wiring svg [data-act='wire'] {
+  cursor: pointer;
+}
+
+.wide.wiring svg [data-act='wire']:hover rect {
+  stroke-width: 2.5;
+}
+
+.lesson {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 18px;
+  align-items: start;
+}
+
+.lesson .col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.panel {
+  border: 1.5px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, #fff 55%, var(--paper));
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+.panel p {
+  margin: 6px 0;
+  line-height: 1.5;
+}
+
+.mut {
+  color: var(--muted);
+}
+
+/* ---- design it ---- */
+
+.selrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.selwrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  flex: 1;
+  min-width: 110px;
+}
+
+.selwrap select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  padding: 5px 6px;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.tile {
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  padding: 8px 6px;
+  text-align: center;
+  background: var(--paper);
+}
+
+.tile .tv {
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile .tk {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.warns {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.warns .warn {
+  border: 1.5px solid var(--warn);
+  color: var(--warn);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.warns .ok {
+  color: #2c7a3f;
+  font-size: 12px;
+}
+
+table.cost {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+table.cost th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--rule);
+  padding: 3px 6px 5px 0;
+}
+
+table.cost td {
+  padding: 4px 6px 4px 0;
+  border-bottom: 1px dashed var(--rule);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- meet + parts ---- */
+
+.overview {
+  line-height: 1.55;
+  font-size: 12.5px;
+}
+
+.overview p {
+  margin: 6px 0;
+}
+
+.selname {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.seltitle {
+  font-weight: 800;
+  margin: 2px 0 4px;
+}
+
+.pchips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pchip {
+  border: 1.5px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0 var(--ink);
+  padding: 4px 9px;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+.pchip.on {
+  opacity: 1;
+}
+
+.pchip.sel {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ---- controls list ---- */
+
+.keys {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.keys div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.keys kbd {
+  border: 1.5px solid var(--ink);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  padding: 1px 6px;
+  font-family: inherit;
+  font-size: 11px;
+  background: var(--paper);
+  white-space: nowrap;
+}
+
+.keys span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* ---- cli + log ---- */
+
+pre.code {
+  background: #26221c;
+  color: #e8e2d2;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin: 8px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.term {
+  background: #1d2a26;
+  color: #8af0ae;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.55;
+  min-height: 90px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.term div {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---- quiz ---- */
+
+.qq {
+  margin-bottom: 10px;
+}
+
+.qq .q {
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
+.qq .aa {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.qq .chip {
+  font-size: 11px;
+  box-shadow: 1.5px 1.5px 0 var(--ink);
+}
+
+.qq .chip.ok {
+  background: var(--ok);
+  color: #fff;
+}
+
+.qq .chip.no {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* ---- flight stage states ---- */
+
+.stage.flying .act:not(.flyb):not(.flyonly) {
+  display: none;
+}
+
+.stage.flying {
+  cursor: crosshair;
+}
+
+.stage.flying .stats {
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+
+.stage.fpv .stats {
+  display: none;
+}
+
+.stage.fpv .actions {
+  display: none;
+}
+
+.fmsg {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  max-width: 86%;
+  text-align: center;
+  z-index: 6;
+}
+
+.fmsg.show {
+  opacity: 1;
+}
+
+/* ---- virtual sticks ---- */
+
+.pad {
+  position: absolute;
+  bottom: 12px;
+  width: 118px;
+  height: 118px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
+  display: none;
+  touch-action: none;
+  z-index: 5;
+}
+
+.pad span {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pad i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.padl {
+  left: 12px;
+}
+
+.padr {
+  right: 12px;
+}
+
+.stage.flying .pad {
+  display: block;
+}
+
+/* ---- responsive ---- */
+
+@media (max-width: 900px) {
+  .lesson {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .side {
+    position: static;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-height: none;
+    gap: 6px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .side h1,
+  .side > p,
+  .side small {
+    display: none;
+  }
+
+  .side a {
+    grid-template-columns: auto;
+    grid-template-areas: 'fig' 'name';
+    flex: 0 0 auto;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+
+  .side a em {
+    display: none;
+  }
+
+  .pad {
+    width: 96px;
+    height: 96px;
+    bottom: 6px;
+  }
+
+  .pad i {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+  }
+}

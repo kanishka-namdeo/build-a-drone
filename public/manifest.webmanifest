@@ -1,0 +1,30 @@
+{
+  "name": "Drone Lab — build a drone",
+  "short_name": "Drone Lab",
+  "description": "Drone Lab — hand-inked drones you design, build and then fly. An interactive FPV drone engineering workshop: pick parts, wire it, smoke-test it, and fly it in the simulator.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2efe7",
+  "theme_color": "#f2efe7",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
