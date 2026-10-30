@@ -67,7 +67,7 @@ Update parent docs when parent-level structure, ownership, workflow, or child in
 - [`src/workshop/AGENTS.md`](src/workshop/AGENTS.md) — bench workshop engine (state machine, calculator, lesson panels)
 - [`src/flight/AGENTS.md`](src/flight/AGENTS.md) — flight simulator (physics, world, renderers, controls)
 - [`src/crafts/AGENTS.md`](src/crafts/AGENTS.md) — the 13 drone definitions + registry
-- [`tests/AGENTS.md`](tests/AGENTS.md) — unit + e2e test suites
+- [`tests/AGENTS.md`](tests/AGENTS.md) — unit (calculator/physics/storage/audio) + e2e (Playwright) suites
 - [`public/AGENTS.md`](public/AGENTS.md) — PWA shell, icons, service worker
 - [`docs/AGENTS.md`](docs/AGENTS.md) — architecture, guides, blog, session checkpoints
 - [`scripts/AGENTS.md`](scripts/AGENTS.md) — dev helper scripts

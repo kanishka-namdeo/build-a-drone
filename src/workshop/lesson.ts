@@ -206,12 +206,13 @@ export function buildLesson(ctx: LessonCtx, main: HTMLElement): LessonDom {
       ctx.setDesign({ [label.toLowerCase().includes('batt') ? 'batt' : label.toLowerCase().includes('motor') ? 'motor' : 'prop']: s.value } as Partial<Design>);
     });
     wrap.appendChild(s);
+    selRow.appendChild(wrap); // keep the label + select together
     return s;
   };
   const d0 = ctx.design();
-  selRow.appendChild(mkSelect('Battery', dr.batts, d0.batt));
-  selRow.appendChild(mkSelect('Motors', dr.motors, d0.motor));
-  selRow.appendChild(mkSelect('Props', dr.props, d0.prop));
+  mkSelect('Battery', dr.batts, d0.batt);
+  mkSelect('Motors', dr.motors, d0.motor);
+  mkSelect('Props', dr.props, d0.prop);
   designSec.appendChild(selRow);
   const tiles = h('div', 'tiles');
   designSec.appendChild(tiles);

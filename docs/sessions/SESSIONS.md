@@ -59,3 +59,44 @@ Bugs found + fixed:
 - Next: crafts 02–13 via parallel subagents (spec data in `/home/z/my-project/research/` agent reports; follow `src/crafts/AGENTS.md`; use quad5.ts as the template).
 - Then: e2e specs, screenshots/media for README, blog post, version bump + release workflow run.
 - PAT for pushes: stored in shell env `GH_TOKEN` (do not commit).
+
+---
+
+## Session 1 (continued) — 2026-10-30 evening
+
+### Checkpoint 7 — Crafts 06-07 (subagents, wave 2)
+- gpscam (Fig 06): Loiter/AltHold/RTL/Auto autopilots — verified RTL end-to-end (climb → home → land → disarm).
+- delivery (Fig 07): 10-phase delivery autopilot verified end-to-end — takeoff → cruise → descend → winch → **release (hover throttle steps 0.62 → 0.50, live AUW change)** → winch up → home → land → disarm.
+- Fixed: hash router now tolerant of `#/key` and `#key?params`; URL params parsed from the hash query too.
+
+### Checkpoint 8 — Crafts 08-13 (written in-session)
+- agrihexa (08): tank drain + live AUW, lawn-mower lanes, refill RTL. Recalibrated kThrust (was 20x low).
+- wing9 (09): full fixed-wing model. **Three physics bugs found + fixed via a Node debug sim:**
+  1. kThrust 10x low (68 g thrust for an 825 g wing → post-launch stall)
+  2. up-vector formula wrong (same class as the physics.ts bug)
+  3. lift acted along the body axis → did work → energy creation → 94,756 m/s explosion. Fixed: lift perpendicular to the velocity (aerodynamically correct, energy-safe), pitch weathervane for static margin.
+- vtol (10): tilt nacelles, Q_ASSIST, T-key manual transition, reversed-servo tail flip, QRTL. Fixed qhover to alt-throttle; verified hover 4.2 m → transition → 14.8 m/s cruise.
+- swarm (11): 4-drone formation via recursive draw(), cflib content.
+- tricopter (12): tail-servo yaw in the model, servo sweep, pirouette runaway.
+- octo (13): motor-out demo (kill M3 → fly on 7 with 9°/s yaw drift), retract gear, level gimbal. Fixed kThrust (10x low) + spawn collision with the base-camp truck.
+
+### Checkpoint 9 — E2E + verification (M5)
+- Playwright suite (10 flows): boot/chrome, manual pedagogy path (11 parts via picker → tests → unplug → props → plug → fly), build-it-for-me, arm/climb/reset, FPV OSD, all 13 crafts boot clean, hash nav, quiz persistence, live calculator, mobile layout.
+- **ALL GREEN: 38 unit + 10 e2e.**
+- Five real bugs found by e2e, all fixed:
+  1. design-select labels created but never appended to the DOM
+  2. quiz answers persisted but never hydrated on reload
+  3. design changes didn't trigger a re-render (stale calculator)
+  4. parts stuck at t=0: the animation poll required t>0 but fresh parts have t=0
+  5. every popover open leaked a stale hidden .chips copy (fixed by removing before append)
+  6. `?fpv` (valueless param) treated as falsy — now `q.has()`
+  Plus prereq gating now uses placement intent (isOn) not animation state.
+
+### Checkpoint 10 — Media + docs (M6)
+- assets/media: 13 craft screenshots, hero bench shot, swarm formation, living room, wing flight, 1.6 MB flight-demo.webm (third-person → FPV → reset). All verified non-empty/valid.
+- README rewritten with media + roster links + test summary.
+- docs/blog/2026-10-30-reimplementing-drone-lab.md (the architecture + bugs-the-users-found post).
+- DOX tree refreshed (see below).
+
+### Resume notes
+- Remaining: version bump to 1.0.0, tag, release workflow run with dist artifacts.

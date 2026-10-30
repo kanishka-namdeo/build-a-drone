@@ -4,7 +4,7 @@
 The 13 figure pages. Each craft is a `CraftRecord` (see `../types.ts`): catalogue data, parts with build order + polarity mistakes, isometric drawing code, wiring map, CLI/log content, quiz, range environment, and optional physics/calc overrides.
 
 ## Ownership
-- `index.ts` — registry (`crafts` array) + 13-entry `roster` (unimplemented crafts show "soon")
+- `index.ts` — registry (`crafts` array) + 13-entry `roster`; `anim.ts` — craftAnim() hook for bench-check animations
 - `quad5.ts` — Fig. 01, the reference implementation; copy its structure for new crafts
 
 ## Local Contracts

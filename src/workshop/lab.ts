@@ -184,11 +184,17 @@ function allPlaced(): boolean {
   return DR.parts.every((p) => isPlaced(p.id));
 }
 
+/** A part is "on" the bench once placed (even mid drop animation). */
+function isOn(id: string): boolean {
+  const p = D.placed[id];
+  return !!p && !p.leave;
+}
+
 function prereqMissing(id: string): string | null {
   const part = partById(id);
   if (!part?.after) return null;
   for (const a of part.after) {
-    if (!isPlaced(a)) {
+    if (!isOn(a)) {
       const ap = partById(a);
       return `${part.short} goes on after ${ap?.short || a}`;
     }
@@ -421,7 +427,7 @@ function goFly(modeKey: string): void {
   }
   D.mode = modeKey;
   D.view = 'fly';
-  D.fpv = false;
+  // note: D.fpv is NOT reset here — the ?fpv param may pre-set it
   const c = calc();
   const cells = (c.cells as number) ?? 6;
   D.flight = newFlight(c, WORLD.pad, DR.mpos.length, cells);
@@ -678,7 +684,7 @@ function dtick(dt: number): boolean {
     !!D.test ||
     D.queue.length > 0 ||
     D.smoke.length > 0 ||
-    Object.values(D.placed).some((p) => (p.leave && p.t > 0) || (p.t > 0 && p.t < 1)) ||
+    Object.values(D.placed).some((p) => (p.leave ? p.t > 0 : p.t < 1)) ||
     D.ex !== D.exT;
   return busy;
 }
@@ -1013,6 +1019,9 @@ export function mountDrone(key: string): void {
   if (dr.modes) MODES = { ...MODES, ...dr.modes };
   WORLD = buildWorld(dr.range ?? { title: 'The field', brief: 'Free flight' });
   D = freshState();
+  // hydrate persisted quiz answers for this craft
+  const savedQuiz = Progress.get(dr.key).quiz;
+  if (savedQuiz) D.quiz = { ...savedQuiz };
   dui = null as unknown as ShellUi;
   lessonDom = null;
 
@@ -1051,7 +1060,7 @@ export function mountDrone(key: string): void {
         D.accOk = true;
         setTimeout(() => goFly(fly), 60);
       }
-      if (q.get('fpv')) {
+      if (q.has('fpv')) {
         D.fpv = true;
         if (fly) setTimeout(() => document.querySelector('.stage')?.classList.add('fpv'), 100);
       }
@@ -1092,6 +1101,7 @@ export function mountDrone(key: string): void {
       D.design = { ...D.design, ...patch };
       D.flight = null;
       if (D.view === 'fly') backToBench();
+      dui.render(); // the calculator tiles + wiring update live
     },
     flying: () => D.view === 'fly',
     mode: () => D.mode,
@@ -1149,7 +1159,7 @@ export function mountDrone(key: string): void {
       D.queue.length > 0 ||
       D.smoke.length > 0 ||
       craftAnimBusy() ||
-      Object.values(D.placed).some((p) => (p.leave && p.t > 0) || (p.t > 0 && p.t < 1)) ||
+      Object.values(D.placed).some((p) => (p.leave ? p.t > 0 : p.t < 1)) ||
       D.ex !== D.exT);
   const kick = (): void => {
     if (gen !== DGEN) return;

@@ -334,6 +334,8 @@ export function mountFigure(cfg: ShellCfg): ShellUi {
           const wasOpen = wrap.classList.contains('open');
           closeChips();
           if (wasOpen) return;
+          // drop any stale popover from a previous open
+          wrap.querySelector('.chips')?.remove();
           const chips = el('div', 'chips');
           for (const c of b.choices!(st)) {
             const chip = el('button', 'chip' + (c.current ? ' current' : '') + (c.disabled ? ' off' : ''), esc(c.label));
