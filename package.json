@@ -1,7 +1,7 @@
 {
   "name": "build-a-drone",
-  "version": "0.1.0",
-  "description": "Drone Lab — a virtual drone builder: hand-inked drones you design, build, and then fly. An interactive FPV drone engineering workshop in your browser.",
+  "version": "1.0.0",
+  "description": "Drone Lab \u2014 a virtual drone builder: hand-inked drones you design, build, and then fly. An interactive FPV drone engineering workshop in your browser.",
   "type": "module",
   "license": "MIT",
   "keywords": [
