@@ -10,9 +10,11 @@ import { quad5 } from './quad5';
 import { cine35 } from './cine35';
 import { lr7 } from './lr7';
 import { race5 } from './race5';
+import { gpscam } from './gpscam';
+import { delivery } from './delivery';
 import { whoop65 } from './whoop65';
 
-export const crafts: CraftRecord[] = [quad5, whoop65, cine35, lr7, race5];
+export const crafts: CraftRecord[] = [quad5, whoop65, cine35, lr7, race5, gpscam, delivery];
 
 export interface RosterEntry {
   key: string;
